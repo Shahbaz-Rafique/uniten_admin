@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import moment from "moment-timezone";
 import Datetime from "react-datetime";
@@ -6,166 +5,238 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendarAlt } from '@fortawesome/free-solid-svg-icons';
 import { Col, Row, Card, Form, Button, InputGroup } from '@themesberg/react-bootstrap';
 
-
 export const GeneralInfoForm = () => {
-  const [birthday, setBirthday] = useState("");
+  const [courseInfo, setCourseInfo] = useState({
+    courseName: "",
+    category: "",
+    aboutCourse: "",
+    relatedCourses: [""],
+    whatYouLearn: [""],
+    entryRequirements: [""],
+    categoryImage: null
+  });
+
+  const handleChange = (field, value) => {
+    setCourseInfo({ ...courseInfo, [field]: value });
+  };
+
+  const handleArrayChange = (field, index, value) => {
+    const newArray = [...courseInfo[field]];
+    newArray[index] = value;
+    setCourseInfo({ ...courseInfo, [field]: newArray });
+  };
+
+  const handleAddField = (field) => {
+    setCourseInfo({ ...courseInfo, [field]: [...courseInfo[field], ""] });
+  };
+
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+
+  //   console.log(courseInfo);
+
+  //   try {
+  //     const response = await fetch("http://localhost:5001/addcourse", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify(courseInfo),
+  //     });
+
+  //     if (response.ok) {
+
+  //       window.alert('Course saved successfully');
+  //       console.log("Course saved successfully");
+  //     } else {
+  //       window.alert('Failed to save');
+
+  //       console.error("Failed to save course");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error during save:", error);
+  //   }
+  // };
+
+
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    console.log(courseInfo);
+
+    try {
+      const formData = new FormData();
+
+      // Append text data to the form data
+      formData.append("courseName", courseInfo.courseName);
+      formData.append("category", courseInfo.category);
+      formData.append("aboutCourse", courseInfo.aboutCourse);
+
+      // Append array data to the form data
+      courseInfo.relatedCourses.forEach((relatedCourse, index) => {
+        formData.append(`relatedCourses[${index}]`, relatedCourse);
+      });
+
+      courseInfo.whatYouLearn.forEach((learn, index) => {
+        formData.append(`whatYouLearn[${index}]`, learn);
+      });
+
+      courseInfo.entryRequirements.forEach((entry, index) => {
+        formData.append(`entryRequirements[${index}]`, entry);
+      });
+
+      // Append file data to the form data
+      formData.append("categoryImage", courseInfo.categoryImage);
+console.log(formData);
+      const response = await fetch("http://localhost:5001/addcourse", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (response.ok) {
+        window.alert("Course saved successfully");
+        console.log("Course saved successfully");
+      } else {
+        window.alert("Failed to save");
+        console.error("Failed to save course");
+      }
+    } catch (error) {
+      console.error("Error during save:", error);
+    }
+  };
+
+  const handleCategoryImageChange = (e) => {
+    const file = e.target.files[0];
+    setCourseInfo({ ...courseInfo, categoryImage: file });
+  };
+
+
+
 
   return (
     <Card border="light" className="bg-white shadow-sm mb-4">
       <Card.Body>
-        <h5 className="mb-4">General information</h5>
-        <Form>
+        <h5 className="mb-4">Course Information</h5>
+        <Form onSubmit={handleSubmit}>
           <Row>
             <Col md={6} className="mb-3">
-              <Form.Group id="firstName">
-                <Form.Label>First Name</Form.Label>
-                <Form.Control required type="text" placeholder="Enter your first name" />
+              <Form.Group id="courseName">
+                <Form.Label>Course Name</Form.Label>
+                <Form.Control
+                  required
+                  type="text"
+                  placeholder="Enter the course name"
+                  value={courseInfo.courseName}
+                  onChange={(e) => handleChange("courseName", e.target.value)}
+                />
               </Form.Group>
             </Col>
             <Col md={6} className="mb-3">
-              <Form.Group id="lastName">
-                <Form.Label>Last Name</Form.Label>
-                <Form.Control required type="text" placeholder="Also your last name" />
+              <Form.Group id="category">
+                <Form.Label>Category</Form.Label>
+                <Form.Control
+                  required
+                  type="text"
+                  placeholder="Enter the category"
+                  value={courseInfo.category}
+                  onChange={(e) => handleChange("category", e.target.value)}
+                />
               </Form.Group>
             </Col>
+
           </Row>
           <Row className="align-items-center">
+
             <Col md={6} className="mb-3">
-              <Form.Group id="birthday">
-                <Form.Label>Birthday</Form.Label>
-                <Datetime
-                  timeFormat={false}
-                  onChange={setBirthday}
-                  renderInput={(props, openCalendar) => (
-                    <InputGroup>
-                      <InputGroup.Text><FontAwesomeIcon icon={faCalendarAlt} /></InputGroup.Text>
-                      <Form.Control
-                        required
-                        type="text"
-                        value={birthday ? moment(birthday).format("MM/DD/YYYY") : ""}
-                        placeholder="mm/dd/yyyy"
-                        onFocus={openCalendar}
-                        onChange={() => { }} />
-                    </InputGroup>
-                  )} />
+              <Form.Group id="categoryImage">
+                <Form.Label>Category Image</Form.Label>
+                <Form.Control
+                  required
+                  type="file"
+                  onChange={handleCategoryImageChange}
+                />
               </Form.Group>
             </Col>
             <Col md={6} className="mb-3">
-              <Form.Group id="gender">
-                <Form.Label>Gender</Form.Label>
-                <Form.Select defaultValue="0">
-                  <option value="0">Gender</option>
-                  <option value="1">Female</option>
-                  <option value="2">Male</option>
-                </Form.Select>
+              <Form.Group id="aboutCourse">
+                <Form.Label>About Course</Form.Label>
+                <Form.Control
+                  as="textarea"
+                  rows={3}
+                  placeholder="Provide information about the course"
+                  value={courseInfo.aboutCourse}
+                  onChange={(e) => handleChange("aboutCourse", e.target.value)}
+                />
               </Form.Group>
             </Col>
+
           </Row>
           <Row>
             <Col md={6} className="mb-3">
-              <Form.Group id="emal">
-                <Form.Label>Email</Form.Label>
-                <Form.Control required type="email" placeholder="name@company.com" />
+              <Form.Group id="relatedCourses">
+                <Form.Label>Related Courses</Form.Label>
+                {courseInfo.relatedCourses.map((relatedCourse, index) => (
+                  <Form.Control
+                    key={index}
+                    className="mt-2"
+                    type="text"
+                    placeholder={`Enter related course #${index + 1}`}
+                    value={relatedCourse}
+                    onChange={(e) => handleArrayChange("relatedCourses", index, e.target.value)}
+                  />
+                ))}
+                <Button className="mt-2" variant="primary" onClick={() => handleAddField("relatedCourses")}>Add Related Course</Button>
               </Form.Group>
             </Col>
             <Col md={6} className="mb-3">
-              <Form.Group id="phone">
-                <Form.Label>Phone</Form.Label>
-                <Form.Control required type="number" placeholder="+12-345 678 910" />
+              <Form.Group id="whatYouLearn">
+                <Form.Label>What You'll Learn</Form.Label>
+                {courseInfo.whatYouLearn.map((learn, index) => (
+                  <Form.Control
+                    key={index}
+                    as="textarea"
+                    className="mt-2"
+                    rows={3}
+                    placeholder={`Enter what students will learn #${index + 1}`}
+                    value={learn}
+                    onChange={(e) => handleArrayChange("whatYouLearn", index, e.target.value)}
+                  />
+                ))}
+                <Button className="mt-2" variant="primary" onClick={() => handleAddField("whatYouLearn")}>Add What You'll Learn</Button>
               </Form.Group>
             </Col>
+
+
+
+
+
+          </Row>
+          <Row>
+            <Col md={6} className="mb-3">
+              <Form.Group id="entryRequirements">
+                <Form.Label>Entry Requirements</Form.Label>
+                {courseInfo.entryRequirements.map((entry, index) => (
+                  <Form.Control
+                    key={index}
+                    type="text"
+                    className="mt-2"
+
+                    placeholder={`Enter entry requirement #${index + 1}`}
+                    value={entry}
+                    onChange={(e) => handleArrayChange("entryRequirements", index, e.target.value)}
+                  />
+                ))}
+                <Button
+                  className="mt-2"
+                  variant="primary" onClick={() => handleAddField("entryRequirements")}>Add Entry Requirement</Button>
+              </Form.Group>
+            </Col>
+
           </Row>
 
-          <h5 className="my-4">Address</h5>
-          <Row>
-            <Col sm={9} className="mb-3">
-              <Form.Group id="address">
-                <Form.Label>Address</Form.Label>
-                <Form.Control required type="text" placeholder="Enter your home address" />
-              </Form.Group>
-            </Col>
-            <Col sm={3} className="mb-3">
-              <Form.Group id="addressNumber">
-                <Form.Label>Number</Form.Label>
-                <Form.Control required type="number" placeholder="No." />
-              </Form.Group>
-            </Col>
-          </Row>
-          <Row>
-            <Col sm={4} className="mb-3">
-              <Form.Group id="city">
-                <Form.Label>City</Form.Label>
-                <Form.Control required type="text" placeholder="City" />
-              </Form.Group>
-            </Col>
-            <Col sm={4} className="mb-3">
-              <Form.Group className="mb-2">
-                <Form.Label>Select state</Form.Label>
-                <Form.Select id="state" defaultValue="0">
-                  <option value="0">State</option>
-                  <option value="AL">Alabama</option>
-                  <option value="AK">Alaska</option>
-                  <option value="AZ">Arizona</option>
-                  <option value="AR">Arkansas</option>
-                  <option value="CA">California</option>
-                  <option value="CO">Colorado</option>
-                  <option value="CT">Connecticut</option>
-                  <option value="DE">Delaware</option>
-                  <option value="DC">District Of Columbia</option>
-                  <option value="FL">Florida</option>
-                  <option value="GA">Georgia</option>
-                  <option value="HI">Hawaii</option>
-                  <option value="ID">Idaho</option>
-                  <option value="IL">Illinois</option>
-                  <option value="IN">Indiana</option>
-                  <option value="IA">Iowa</option>
-                  <option value="KS">Kansas</option>
-                  <option value="KY">Kentucky</option>
-                  <option value="LA">Louisiana</option>
-                  <option value="ME">Maine</option>
-                  <option value="MD">Maryland</option>
-                  <option value="MA">Massachusetts</option>
-                  <option value="MI">Michigan</option>
-                  <option value="MN">Minnesota</option>
-                  <option value="MS">Mississippi</option>
-                  <option value="MO">Missouri</option>
-                  <option value="MT">Montana</option>
-                  <option value="NE">Nebraska</option>
-                  <option value="NV">Nevada</option>
-                  <option value="NH">New Hampshire</option>
-                  <option value="NJ">New Jersey</option>
-                  <option value="NM">New Mexico</option>
-                  <option value="NY">New York</option>
-                  <option value="NC">North Carolina</option>
-                  <option value="ND">North Dakota</option>
-                  <option value="OH">Ohio</option>
-                  <option value="OK">Oklahoma</option>
-                  <option value="OR">Oregon</option>
-                  <option value="PA">Pennsylvania</option>
-                  <option value="RI">Rhode Island</option>
-                  <option value="SC">South Carolina</option>
-                  <option value="SD">South Dakota</option>
-                  <option value="TN">Tennessee</option>
-                  <option value="TX">Texas</option>
-                  <option value="UT">Utah</option>
-                  <option value="VT">Vermont</option>
-                  <option value="VA">Virginia</option>
-                  <option value="WA">Washington</option>
-                  <option value="WV">West Virginia</option>
-                  <option value="WI">Wisconsin</option>
-                  <option value="WY">Wyoming</option>
-                </Form.Select>
-              </Form.Group>
-            </Col>
-            <Col sm={4}>
-              <Form.Group id="zip">
-                <Form.Label>ZIP</Form.Label>
-                <Form.Control required type="tel" placeholder="ZIP" />
-              </Form.Group>
-            </Col>
-          </Row>
           <div className="mt-3">
-            <Button variant="primary" type="submit">Save All</Button>
+            <Button variant="primary" onClick={handleSubmit} type="submit">Save Course</Button>
           </div>
         </Form>
       </Card.Body>

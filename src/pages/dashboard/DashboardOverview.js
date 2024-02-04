@@ -29,9 +29,7 @@ export default () => {
 
             <Dropdown.Divider />
 
-            <Dropdown.Item className="fw-bold">
-              <FontAwesomeIcon icon={faRocket} className="text-danger me-2" /> Upgrade to Pro
-            </Dropdown.Item>
+
           </Dropdown.Menu>
         </Dropdown>
 

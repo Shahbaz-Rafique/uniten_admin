@@ -1,76 +1,40 @@
-import React from "react";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBoxOpen, faCartArrowDown, faChartPie, faChevronDown, faClipboard, faCommentDots, faFileAlt, faPlus, faRocket, faStore } from '@fortawesome/free-solid-svg-icons';
-import { Col, Row, Button, Dropdown } from '@themesberg/react-bootstrap';
-import { ChoosePhotoWidget, ProfileCardWidget } from "../components/Widgets";
-import { GeneralInfoForm } from "../components/Forms";
+import Head from 'next/head';
+import { Box, Container, Stack, Typography } from '@mui/material';
+import { SettingsNotifications } from 'src/sections/settings/settings-notifications';
+import { SettingsPassword } from 'src/sections/settings/settings-password';
+import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
 
-import Profile3 from "../assets/img/team/profile-picture-3.jpg";
+const Page = () => (
+  <>
+    <Head>
+      <title>
+        Settings | Devias Kit
+      </title>
+    </Head>
+    <Box
+      component="main"
+      sx={{
+        flexGrow: 1,
+        py: 8
+      }}
+    >
+      <Container maxWidth="lg">
+        <Stack spacing={3}>
+          <Typography variant="h4">
+            Settings
+          </Typography>
+          <SettingsNotifications />
+          <SettingsPassword />
+        </Stack>
+      </Container>
+    </Box>
+  </>
+);
 
-export default () => {
-  return (
-    <>
-      <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
-        <Dropdown>
-          <Dropdown.Toggle as={Button} variant="secondary" className="text-dark me-2">
-            <span>Add New Course</span>
-          </Dropdown.Toggle>
-          <Dropdown.Menu className="dashboard-dropdown dropdown-menu-left mt-2">
-            <Dropdown.Item>
-              <FontAwesomeIcon icon={faFileAlt} className="me-2" /> Document
-            </Dropdown.Item>
-            <Dropdown.Item>
-              <FontAwesomeIcon icon={faCommentDots} className="me-2" /> Message
-            </Dropdown.Item>
-            <Dropdown.Item>
-              <FontAwesomeIcon icon={faBoxOpen} className="me-2" /> Product
-            </Dropdown.Item>
+Page.getLayout = (page) => (
+  <DashboardLayout>
+    {page}
+  </DashboardLayout>
+);
 
-            <Dropdown.Divider />
-
-            <Dropdown.Item>
-              <FontAwesomeIcon icon={faRocket} className="text-danger me-2" /> Subscription Plan
-            </Dropdown.Item>
-          </Dropdown.Menu>
-        </Dropdown>
-
-        <div className="d-flex">
-          <Dropdown>
-            <Dropdown.Toggle as={Button} variant="primary">
-              <FontAwesomeIcon icon={faClipboard} className="me-2" /> Reports
-              <span className="icon icon-small ms-1"><FontAwesomeIcon icon={faChevronDown} /></span>
-            </Dropdown.Toggle>
-            <Dropdown.Menu className="dashboard-dropdown dropdown-menu-left mt-1">
-              <Dropdown.Item>
-                <FontAwesomeIcon icon={faBoxOpen} className="me-2" /> Products
-              </Dropdown.Item>
-              <Dropdown.Item>
-                <FontAwesomeIcon icon={faStore} className="me-2" /> Customers
-              </Dropdown.Item>
-              <Dropdown.Item>
-                <FontAwesomeIcon icon={faCartArrowDown} className="me-2" /> Orders
-              </Dropdown.Item>
-              <Dropdown.Item>
-                <FontAwesomeIcon icon={faChartPie} className="me-2" /> Console
-              </Dropdown.Item>
-
-              <Dropdown.Divider />
-
-              <Dropdown.Item>
-                <FontAwesomeIcon icon={faRocket} className="text-success me-2" /> All Reports
-              </Dropdown.Item>
-            </Dropdown.Menu>
-          </Dropdown>
-        </div>
-      </div>
-
-      <Row>
-        <Col xs={12} xl={12}>
-          <GeneralInfoForm />
-        </Col>
-
-       
-      </Row>
-    </>
-  );
-};
+export default Page;

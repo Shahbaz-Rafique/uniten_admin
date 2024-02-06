@@ -89,7 +89,7 @@ export const GeneralInfoForm = () => {
       // Append file data to the form data
       formData.append("categoryImage", courseInfo.categoryImage);
 console.log(formData);
-      const response = await fetch("http://localhost:5001/addcourse", {
+      const response = await fetch("https://fresh-tropical-colony.glitch.me/addcourse", {
         method: "POST",
         body: formData,
       });

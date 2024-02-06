@@ -15,7 +15,7 @@ const SignIn = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch("http://localhost:5001/adminsignin", {
+      const response = await fetch("https://fresh-tropical-colony.glitch.me/adminsignin", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -23,19 +23,22 @@ const SignIn = () => {
         body: JSON.stringify({ email, password }),
       });
 
-      if (response.ok) {
+
+
+    
         // Handle successful sign-in, e.g., redirect to dashboard
 
         localStorage.setItem('login',true);
 
-        window.location.href='/dashboard';
+        window.location.href='volt-react-dashboard#/dashboard';
         console.log("Sign-in successful");
-      } 
+      
       //else {
       //   // Handle sign-in failure, show error message, etc.
       //   console.error("Sign-in failed");
       // }
     } catch (error) {
+      window.alert(error)
       console.error("Error during sign-in:", error);
     }
   };

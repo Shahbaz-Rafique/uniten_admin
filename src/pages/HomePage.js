@@ -98,7 +98,7 @@ const RouteWithSidebar = ({ component: Component, ...rest }) => {
     />
   );
 };
-const isLoggedIn = localStorage.getItem("login") === "true";
+// const isLoggedIn = localStorage.getItem("login") === "true";
 
 export default () => (
 
